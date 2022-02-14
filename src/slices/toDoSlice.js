@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const getInitialToDo = () => {
     const localToDoList = window.localStorage.getItem('toDoList');
@@ -29,9 +29,37 @@ export const toDoSlice = createSlice({
             } else {
                 window.localStorage.setItem('toDoList', JSON.stringify([{...action.payload}]))
             }
+        },
+        deleteToDo: (state, action) => {
+            const toDoList = window.localStorage.getItem('toDoList');
+            if (toDoList) {
+                const toDoListArr = JSON.parse(toDoList);
+                toDoListArr.forEach((toDo, index) => {
+                    if (toDo.id === action.payload) {
+                        toDoListArr.splice(index, 1)
+                    }
+                });
+
+                window.localStorage.setItem('toDoList', JSON.stringify(toDoListArr))
+                state.toDoList = toDoListArr;
+            }
+        },
+        updateToDo: (state, action) => {
+            const toDoList = window.localStorage.getItem('toDoList');
+            if (toDoList) {
+                const toDoListArr = JSON.parse(toDoList);
+                toDoListArr.forEach((toDo, index) => {
+                    if (toDo.id === action.payload.id) {
+                        toDo.title = action.payload.title;
+                        toDo.status = action.payload.status;
+                    }
+                });
+                window.localStorage.setItem('toDoList', JSON.stringify(toDoListArr));
+                state.toDoList = toDoListArr;
+            }
         }
     }
 })
 
-export const { addToDo } = toDoSlice.actions;
+export const { addToDo, deleteToDo, updateToDo } = toDoSlice.actions;
 export default toDoSlice.reducer;

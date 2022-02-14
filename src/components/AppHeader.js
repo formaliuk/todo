@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Button, { SelectButton } from "./Button";
+import Button, { SelectButton } from './Button';
 import styles from '../styles/modules/app.module.scss';
-import ToDoModal from "./ToDoModal";
+import ToDoModal from './ToDoModal';
 
 
 const AppHeader = () => {
@@ -18,7 +18,7 @@ const AppHeader = () => {
                 <option value='incomplete'>Incomplete</option>
                 <option value='complete'>Complete</option>
             </SelectButton>
-            <ToDoModal modalOpen={modalOpen} setModalOpen={setModalOpen}/>
+            <ToDoModal type='add' modalOpen={modalOpen} setModalOpen={setModalOpen}/>
         </div>
     );
 };
