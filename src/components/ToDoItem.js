@@ -1,16 +1,25 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from '../styles/modules/todoItem.module.scss';
 import {getClasses} from '../utils/getClasses';
-import {format} from "date-fns";
 import {MdDelete, MdEdit} from 'react-icons/md';
 import {useDispatch} from 'react-redux';
-import {deleteToDo} from "../slices/toDoSlice";
-import {toast} from "react-hot-toast";
-import ToDoModal from "./ToDoModal";
+import {deleteToDo, updateToDo} from '../slices/toDoSlice';
+import {toast} from 'react-hot-toast';
+import ToDoModal from './ToDoModal';
+import CheckButton from './CheckButton';
 
 const ToDoItem = ({ toDo }) => {
     const dispatch = useDispatch();
     const [updateModalOpen, setUpdateModalOpen] = useState(false);
+    const [checked, setChecked] = useState(false);
+
+    useEffect( () => {
+        if (toDo.status === 'complete') {
+            setChecked(true);
+        } else {
+            setChecked(false);
+        }
+    }, [toDo.status]);
 
     const handleDelete = () => {
         dispatch(deleteToDo(toDo.id));
@@ -21,18 +30,27 @@ const ToDoItem = ({ toDo }) => {
         setUpdateModalOpen(true);
     }
 
+    const handleCheck = () => {
+        setChecked(!checked);
+        dispatch(updateToDo({
+            ...toDo,
+            status: checked ? 'incomplete' : 'complete'
+            })
+        );
+    }
+
     return (
         <>
             <div className={styles.item}>
                 <div className={styles.todoDetails}>
-                    [ ]
+                    <CheckButton checked={checked} handleCheck={handleCheck}/>
                     <div className={styles.texts}>
                         <p className={getClasses([styles.todoText, toDo.status === 'complete' && styles['todoText--completed']])}>
                             {toDo.title}
                         </p>
-                        {/*<p className={styles.time}>*/}
-                        {/*    {format(new Date(toDo.time), `YYYY-MM-DD:HH:mm:ss`)}*/}
-                        {/*</p>*/}
+                        <p className={styles.time}>
+                            {toDo.time}
+                        </p>
                     </div>
                 </div>
                 <div className={styles.todoActions}>
@@ -56,6 +74,7 @@ const ToDoItem = ({ toDo }) => {
             </div>
             <ToDoModal
                 type='update'
+                toDo={toDo}
                 modalOpen={updateModalOpen}
                 setModalOpen={setUpdateModalOpen}
             />
